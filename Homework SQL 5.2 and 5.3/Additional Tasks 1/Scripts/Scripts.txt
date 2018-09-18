@@ -1,0 +1,79 @@
+1
+SELECT EMPID, EMPNAME, SALARY
+FROM `emp a`
+ORDER BY SALARY DESC
+LIMIT 3
+
+2
+SELECT EMPID, EMPNAME, SALARY
+FROM `emp a`
+ORDER BY SALARY DESC
+LIMIT 2
+
+3
+SELECT EMPNAME, DOB, DEPTNAME
+FROM `emp a`, `dept b`
+WHERE `dept b`.DEPTID = `emp a`.DEPTID 
+AND DEPTNAME = 'QA'
+ORDER BY EMPNAME ASC
+
+4
+SELECT EMPNAME AS 'EMPLOYEE NAME', YEAR(CURDATE()) - YEAR(DOB) AS 'AGE', DEPTNAME AS 'DEPARTMENT NAME'
+FROM `emp a`, `dept b`
+WHERE `dept b`.DEPTID = `emp a`.DEPTID
+ORDER BY AGE DESC
+
+5
+SELECT DEPTNAME AS 'DEPARTMENT NAME', COUNT(`emp a`.DEPTID) AS 'Number of Employees'
+FROM `emp a`, `dept b`
+WHERE `dept b`.DEPTID = `emp a`.DEPTID
+GROUP BY DEPTNAME
+
+6(1)
+SELECT `emp a`.EMPNAME AS 'EMPLOYEE NAME', IF(MGRID IS NULL, 'None', `emp a`.EMPNAME) AS 'MANAGER NAME',
+`dept b`.DEPTNAME AS 'DEPARTMENT NAME'
+FROM `dept b`,`emp a` 
+WHERE`dept b`.DEPTID = `emp a`.DEPTID
+
+6(2)
+SELECT `emp a`.EMPID, `emp a`.EMPNAME AS 'EMPLOYEE NAME',
+MGRNAME.EMPNAME AS 'MANAGER NAME',   
+`dept b`.DEPTNAME AS 'DEPARTMENT NAME'
+FROM `emp a`, `dept b`,
+  (SELECT `emp a`.MGRID, EMPID, IF(MGRID IS NULL, 'None', `emp a`.EMPNAME) AS 'EMPNAME'
+  FROM `dept b`,`emp a` 
+  WHERE`dept b`.DEPTID = `emp a`.DEPTID) 
+  AS MGRNAME
+WHERE `dept b`.DEPTID = `emp a`.DEPTID 
+AND MGRNAME.EMPID = `emp a`.EMPID
+
+7(1)
+SELECT `emp a`.EMPNAME AS 'EMPLOYEE NAME', IF(MGRID IS NULL, 'None', `emp a`.EMPNAME) AS 'MANAGER NAME',
+`dept b`.DEPTNAME AS 'DEPARTMENT NAME'
+FROM `dept b`,`emp a`, 
+  ((SELECT `emp a`.DEPTID, DEPTNAME 
+    FROM `dept b`,`emp a` 
+    WHERE`dept b`.DEPTID = `emp a`.DEPTID 
+    GROUP BY DEPTNAME 
+    HAVING COUNT(`emp a`.DEPTID) > 1))    
+  AS DepName
+WHERE `dept b`.DEPTID = `emp a`.DEPTID 
+AND DepName.DEPTID = `dept b`.DEPTID 
+
+7(2)
+SELECT `emp a`.EMPID, `emp a`.EMPNAME AS 'EMPLOYEE NAME',  
+MGRNAME.EMPNAME AS 'MANAGER NAME', DepName.DEPTNAME AS 'DEPARTMENT NAME'
+FROM `emp a`, `dept b`,
+  (SELECT `emp a`.MGRID, EMPID, IF(MGRID IS NULL, 'None', `emp a`.EMPNAME) AS 'EMPNAME'
+   FROM `dept b`,`emp a` 
+   WHERE`dept b`.DEPTID = `emp a`.DEPTID) 
+   AS MGRNAME,
+  ((SELECT `emp a`.DEPTID, DEPTNAME 
+    FROM `dept b`,`emp a` 
+    WHERE`dept b`.DEPTID = `emp a`.DEPTID 
+    GROUP BY DEPTNAME 
+    HAVING COUNT(`emp a`.DEPTID) > 1))  
+   AS DepName
+WHERE `dept b`.DEPTID = `emp a`.DEPTID 
+AND MGRNAME.EMPID = `emp a`.EMPID
+AND DepName.DEPTID = `dept b`.DEPTID 

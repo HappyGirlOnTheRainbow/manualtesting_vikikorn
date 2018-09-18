@@ -1,0 +1,6 @@
+SELECT InstrumentCode, RatingValue, RatingAgencyName, RatingTypeCode
+FROM InstrumentRating, Instrument, RatingType, Rating, RatingAgency
+WHERE Instrumentrating.InstrumentID = Instrument.InstrumentID 
+AND InstrumentRating.RatingID = Rating.RatingID
+AND Rating.RatingTypeID = RatingType.RatingTypeID 
+AND Rating.RatingAgencyID = RatingAgency.RatingAgencyID

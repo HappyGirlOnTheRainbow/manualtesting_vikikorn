@@ -1,0 +1,19 @@
+1
+SELECT * FROM task1.customers
+WHERE Name LIKE 'Bruce%'
+
+2
+SELECT Status, SUM(Price)
+FROM orders
+WHERE Status = 'Complete'
+
+3
+SELECT Name, OrderID, Status, Price
+FROM Customers, Orders
+WHERE Customers.CustomerID = Orders.CustomerID
+
+4
+SELECT Customers.Name, OrderID, Status, Price, Country.Name
+FROM Customers, Orders, Country
+WHERE Customers.CustomerID = Orders.CustomerID 
+AND Customers.CountryID = Country.ID
